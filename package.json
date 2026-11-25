@@ -1,5 +1,5 @@
 {
-	"name": "iosdc-japan-2025-albatross-frontend",
+	"name": "iosdc-japan-2025-albatross",
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
@@ -10,7 +10,7 @@
 		"check:biome": "biome check --write",
 		"check:eslint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
 		"check:ts": "tsc",
-		"openapi-typescript": "openapi-typescript --output ./app/api/schema.d.ts ../openapi/api-server.yaml",
+		"openapi-typescript": "openapi-typescript --output ./app/api/schema.d.ts ./openapi/api-server.yaml",
 		"shiki-codegen": "shiki-codegen --langs swift --themes github-light --engine javascript ./app/shiki.bundle.ts"
 	},
 	"dependencies": {

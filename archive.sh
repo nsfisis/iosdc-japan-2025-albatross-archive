@@ -4,7 +4,7 @@ set -euo pipefail
 BASE_URL="https://t.nil.ninja/iosdc-japan/2025/code-battle"
 
 fetch() {
-  curl -fsS --create-dirs -o "frontend/$2" "$BASE_URL/$1"
+  curl -fsS --create-dirs -o "$2" "$BASE_URL/$1"
 }
 
 # Icons
@@ -37,7 +37,7 @@ fetch 'api/tournament?game1=8&game2=9&game3=10&game4=11&game5=12' data/tournamen
 # Rewrite labels of tournament participants
 #
 #   user_id: 9=log5 10=kntkymt 13=kagaffy 14=kazuya 17=KeisukeSakata 19=WorldDownTown
-grep -rlE '"user_id":(9|10|13|14|17|19),' frontend/data | sort | while read -r f; do
+grep -rlE '"user_id":(9|10|13|14|17|19),' data | sort | while read -r f; do
   jq -c '
     {"10": "優勝", "14": "準優勝", "13": "ベスト4", "9": "ベスト4", "17": "ベスト6", "19": "ベスト6"} as $labels
     | walk(
