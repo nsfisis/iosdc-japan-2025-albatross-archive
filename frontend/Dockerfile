@@ -1,30 +1,21 @@
-FROM node:22.14 AS builder
-
-ARG ALBATROSS_HOST
-ARG ALBATROSS_BASE_PATH
+FROM node:24.22.2 AS builder
 
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY package.json package-lock.json .
-RUN npm install --include=dev
+COPY package.json package-lock.json ./
+RUN npm ci --include=dev
 
-COPY . .
-ENV ALBATROSS_BASE_PATH="$ALBATROSS_BASE_PATH"
+COPY index.html prerender.ts tsconfig.json vite.config.ts ./
+COPY app/ app/
+COPY data/ data/
+COPY public/ public/
 RUN npm run build
 
 ################################################################################
-FROM node:22.14
+FROM nginx:1.30.7-alpine
 
-WORKDIR /app
-ENV NODE_ENV=production
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=builder /app/dist /var/www/iosdc-japan/2025/code-battle-archive
 
-COPY package.json package-lock.json .
-RUN npm install --omit=dev
-
-COPY --from=builder /app/build ./build
-
-ENV HOST="$ALBATROSS_HOST"
-ENV PORT=80
 EXPOSE 80
-CMD ["npm", "run", "start"]
