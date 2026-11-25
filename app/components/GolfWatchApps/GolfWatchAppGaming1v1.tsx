@@ -58,10 +58,12 @@ export default function GolfWatchAppGaming1v1({
 
 	const stateA = (playerA && latestStates[`${playerA.user_id}`]) ?? null;
 	const codeA = stateA?.code ?? "";
+	const codeHtmlA = stateA?.code_html ?? "";
 	const scoreA = stateA?.score ?? null;
 	const statusA = stateA?.status ?? "none";
 	const stateB = (playerB && latestStates[`${playerB.user_id}`]) ?? null;
 	const codeB = stateB?.code ?? "";
+	const codeHtmlB = stateB?.code_html ?? "";
 	const scoreB = stateB?.score ?? null;
 	const statusB = stateB?.status ?? "none";
 
@@ -135,13 +137,14 @@ export default function GolfWatchAppGaming1v1({
 					<FoldableBorderedContainerWithCaption
 						caption={`コードサイズ: ${codeSizeA}`}
 					>
-						<CodeBlock code={codeA} />
+						<CodeBlock code={codeA} html={codeHtmlA} />
 					</FoldableBorderedContainerWithCaption>
 				</TitledColumn>
 				<TitledColumn title={game.problem.title} className="order-1 md:order-2">
 					<ProblemColumnContent
 						description={game.problem.description}
 						sampleCode={game.problem.sample_code}
+						sampleCodeHtml={game.problem.sample_code_html}
 					/>
 					<RankingTable ranking={ranking} />
 				</TitledColumn>
@@ -152,7 +155,7 @@ export default function GolfWatchAppGaming1v1({
 					<FoldableBorderedContainerWithCaption
 						caption={`コードサイズ: ${codeSizeB}`}
 					>
-						<CodeBlock code={codeB} />
+						<CodeBlock code={codeB} html={codeHtmlB} />
 					</FoldableBorderedContainerWithCaption>
 				</TitledColumn>
 			</ThreeColumnLayout>

@@ -28,11 +28,13 @@ function SwiftNotice() {
 type Props = {
 	description: string;
 	sampleCode: string;
+	sampleCodeHtml: string;
 };
 
 export default function ProblemColumnContent({
 	description,
 	sampleCode,
+	sampleCodeHtml,
 }: Props) {
 	return (
 		<>
@@ -42,7 +44,7 @@ export default function ProblemColumnContent({
 				</pre>
 			</FoldableBorderedContainerWithCaption>
 			<FoldableBorderedContainerWithCaption caption="サンプルコード">
-				<CodeBlock code={sampleCode} />
+				<CodeBlock code={sampleCode} html={sampleCodeHtml} />
 			</FoldableBorderedContainerWithCaption>
 			<SwiftNotice />
 		</>

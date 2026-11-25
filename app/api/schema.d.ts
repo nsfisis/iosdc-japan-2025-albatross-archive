@@ -212,6 +212,8 @@ export interface components {
             language: "php" | "swift";
             /** @example echo 'hello world'; */
             sample_code: string;
+            /** @description Syntax-highlighted HTML of sample_code, pre-rendered by shiki. */
+            sample_code_html: string;
         };
         /**
          * @example success
@@ -221,6 +223,8 @@ export interface components {
         LatestGameState: {
             /** @example echo 'hello world'; */
             code: string;
+            /** @description Syntax-highlighted HTML of code, pre-rendered by shiki. */
+            code_html: string;
             /** @example 100 */
             score: number | null;
             /** @example 946684800 */
@@ -235,6 +239,8 @@ export interface components {
             submitted_at: number;
             /** @example echo 'hello world'; */
             code: string | null;
+            /** @description Syntax-highlighted HTML of code, pre-rendered by shiki. */
+            code_html: string | null;
         };
         Tournament: {
             matches: components["schemas"]["TournamentMatch"][];

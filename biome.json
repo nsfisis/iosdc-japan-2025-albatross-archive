@@ -12,8 +12,7 @@
 			"./data",
 			"./dist",
 			"./public",
-			"./app/api/schema.d.ts",
-			"./app/shiki.bundle.ts"
+			"./app/api/schema.d.ts"
 		]
 	},
 	"formatter": {
