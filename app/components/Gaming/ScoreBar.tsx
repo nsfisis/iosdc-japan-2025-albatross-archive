@@ -6,7 +6,7 @@ type Props = {
 };
 
 export default function ScoreBar({ scoreA, scoreB, bgA, bgB }: Props) {
-	let scoreRatio;
+	let scoreRatio: number;
 	if (scoreA === null && scoreB === null) {
 		scoreRatio = 50;
 	} else if (scoreA === null) {
@@ -17,8 +17,7 @@ export default function ScoreBar({ scoreA, scoreB, bgA, bgB }: Props) {
 		const rawRatio = scoreB / (scoreA + scoreB);
 		const k = 3.0;
 		const emphasizedRatio =
-			Math.pow(rawRatio, k) /
-			(Math.pow(rawRatio, k) + Math.pow(1 - rawRatio, k));
+			rawRatio ** k / (rawRatio ** k + (1 - rawRatio) ** k);
 		scoreRatio = emphasizedRatio * 100;
 	}
 

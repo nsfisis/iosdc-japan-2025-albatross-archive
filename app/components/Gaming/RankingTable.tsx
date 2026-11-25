@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import type { components } from "../../api/schema";
 import CodePopover from "./CodePopover";
 
