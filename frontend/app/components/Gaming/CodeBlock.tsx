@@ -1,20 +1,19 @@
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { JSX, useLayoutEffect, useState } from "react";
-import { type BundledLanguage, highlight } from "../../highlight";
+import { highlight } from "../../highlight";
 
 type Props = {
 	code: string;
-	language: BundledLanguage;
 };
 
-export default function CodeBlock({ code, language }: Props) {
+export default function CodeBlock({ code }: Props) {
 	const [nodes, setNodes] = useState<JSX.Element | null>(null);
 	const [showCopied, setShowCopied] = useState(false);
 
 	useLayoutEffect(() => {
-		highlight(code, language).then(setNodes);
-	}, [code, language]);
+		highlight(code).then(setNodes);
+	}, [code]);
 
 	const handleCopy = () => {
 		navigator.clipboard.writeText(code).then(() => {

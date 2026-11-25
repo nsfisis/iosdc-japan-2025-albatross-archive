@@ -1,8 +1,8 @@
-import { useAtomValue } from "jotai";
 import React from "react";
-import { rankingAtom } from "../../states/watch";
-import type { SupportedLanguage } from "../../types/SupportedLanguage";
+import type { components } from "../../api/schema";
 import CodePopover from "./CodePopover";
+
+type RankingEntry = components["schemas"]["RankingEntry"];
 
 function TableHeaderCell({ children }: { children: React.ReactNode }) {
 	return (
@@ -18,25 +18,24 @@ function TableBodyCell({ children }: { children: React.ReactNode }) {
 	);
 }
 
+// Formats in JST so that the prerendered HTML does not depend on the timezone.
 function formatUnixTimestamp(timestamp: number) {
-	const date = new Date(timestamp * 1000);
+	const date = new Date((timestamp + 9 * 60 * 60) * 1000);
 
-	const year = date.getFullYear();
-	const month = (date.getMonth() + 1).toString().padStart(2, "0");
-	const day = date.getDate().toString().padStart(2, "0");
-	const hours = date.getHours().toString().padStart(2, "0");
-	const minutes = date.getMinutes().toString().padStart(2, "0");
+	const year = date.getUTCFullYear();
+	const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+	const day = date.getUTCDate().toString().padStart(2, "0");
+	const hours = date.getUTCHours().toString().padStart(2, "0");
+	const minutes = date.getUTCMinutes().toString().padStart(2, "0");
 
 	return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
 type Props = {
-	problemLanguage: SupportedLanguage;
+	ranking: RankingEntry[];
 };
 
-export default function RankingTable({ problemLanguage }: Props) {
-	const ranking = useAtomValue(rankingAtom);
-
+export default function RankingTable({ ranking }: Props) {
 	return (
 		<div className="overflow-x-auto border-2 border-blue-600 rounded-xl">
 			<table className="min-w-full divide-y divide-gray-400 border-collapse">
@@ -62,9 +61,7 @@ export default function RankingTable({ problemLanguage }: Props) {
 								{formatUnixTimestamp(entry.submitted_at)}
 							</TableBodyCell>
 							<TableBodyCell>
-								{entry.code && (
-									<CodePopover code={entry.code} language={problemLanguage} />
-								)}
+								{entry.code && <CodePopover code={entry.code} />}
 							</TableBodyCell>
 						</tr>
 					))}

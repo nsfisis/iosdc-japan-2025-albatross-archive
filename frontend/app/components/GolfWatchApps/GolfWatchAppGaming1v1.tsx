@@ -1,118 +1,120 @@
-import { useAtomValue } from "jotai";
-import {
-	calcCodeSize,
-	checkGameResultKind,
-	gameStateKindAtom,
-	gamingLeftTimeSecondsAtom,
-	latestGameStatesAtom,
-} from "../../states/watch";
-import type { PlayerProfile } from "../../types/PlayerProfile";
-import type { SupportedLanguage } from "../../types/SupportedLanguage";
+import type { components } from "../../api/schema";
+import { calcCodeSize } from "../../codeSize";
 import FoldableBorderedContainerWithCaption from "../FoldableBorderedContainerWithCaption";
 import CodeBlock from "../Gaming/CodeBlock";
-import LeftTime from "../Gaming/LeftTime";
 import ProblemColumnContent from "../Gaming/ProblemColumnContent";
 import RankingTable from "../Gaming/RankingTable";
-import Score from "../Gaming/Score";
 import ScoreBar from "../Gaming/ScoreBar";
 import SubmitStatusLabel from "../SubmitStatusLabel";
 import ThreeColumnLayout from "../ThreeColumnLayout";
 import TitledColumn from "../TitledColumn";
 import UserIcon from "../UserIcon";
 
+type Game = components["schemas"]["Game"];
+type LatestGameState = components["schemas"]["LatestGameState"];
+type RankingEntry = components["schemas"]["RankingEntry"];
+type User = components["schemas"]["User"];
+
+type GameResultKind = "winA" | "winB" | "draw";
+
+function checkGameResultKind(
+	stateA: LatestGameState | null,
+	stateB: LatestGameState | null,
+): GameResultKind {
+	const scoreA = stateA?.score;
+	const scoreB = stateB?.score;
+	if (scoreA == null && scoreB == null) {
+		return "draw";
+	}
+	if (scoreA == null) {
+		return "winB";
+	}
+	if (scoreB == null) {
+		return "winA";
+	}
+	if (scoreA === scoreB) {
+		// If score is non-null, state and best_score_submitted_at should also be non-null.
+		const submittedAtA = stateA!.best_score_submitted_at!;
+		const submittedAtB = stateB!.best_score_submitted_at!;
+		return submittedAtA < submittedAtB ? "winA" : "winB";
+	} else {
+		return scoreA < scoreB ? "winA" : "winB";
+	}
+}
+
 type Props = {
-	gameDisplayName: string;
-	playerProfileA: PlayerProfile | null;
-	playerProfileB: PlayerProfile | null;
-	problemTitle: string;
-	problemDescription: string;
-	problemLanguage: SupportedLanguage;
-	sampleCode: string;
+	game: Game;
+	ranking: RankingEntry[];
+	latestStates: { [key: string]: LatestGameState };
 };
 
 export default function GolfWatchAppGaming1v1({
-	gameDisplayName,
-	playerProfileA,
-	playerProfileB,
-	problemTitle,
-	problemDescription,
-	problemLanguage,
-	sampleCode,
+	game,
+	ranking,
+	latestStates,
 }: Props) {
-	const gameStateKind = useAtomValue(gameStateKindAtom);
-	const leftTimeSeconds = useAtomValue(gamingLeftTimeSecondsAtom)!;
-	const latestGameStates = useAtomValue(latestGameStatesAtom);
+	const playerA: User | undefined = game.main_players[0];
+	const playerB: User | undefined = game.main_players[1];
 
-	const stateA =
-		playerProfileA && (latestGameStates[`${playerProfileA.id}`] ?? null);
+	const stateA = (playerA && latestStates[`${playerA.user_id}`]) ?? null;
 	const codeA = stateA?.code ?? "";
 	const scoreA = stateA?.score ?? null;
 	const statusA = stateA?.status ?? "none";
-	const stateB =
-		playerProfileB && (latestGameStates[`${playerProfileB.id}`] ?? null);
+	const stateB = (playerB && latestStates[`${playerB.user_id}`]) ?? null;
 	const codeB = stateB?.code ?? "";
 	const scoreB = stateB?.score ?? null;
 	const statusB = stateB?.status ?? "none";
 
-	const codeSizeA = calcCodeSize(codeA, problemLanguage);
-	const codeSizeB = calcCodeSize(codeB, problemLanguage);
+	const codeSizeA = calcCodeSize(codeA);
+	const codeSizeB = calcCodeSize(codeB);
 
-	const gameResultKind = checkGameResultKind(gameStateKind, stateA, stateB);
+	const gameResultKind = checkGameResultKind(stateA, stateB);
 
-	const topBg = gameResultKind
-		? gameResultKind === "winA"
+	const topBg =
+		gameResultKind === "winA"
 			? "bg-orange-400"
 			: gameResultKind === "winB"
 				? "bg-purple-400"
-				: "bg-sky-600"
-		: "bg-sky-600";
+				: "bg-sky-600";
 
 	return (
 		<div className="min-h-screen bg-gray-100 flex flex-col">
 			<div className={`text-white ${topBg} grid grid-cols-3 px-4 py-2`}>
 				<div className="font-bold flex gap-4 justify-start md:justify-between items-center my-auto">
 					<div className="flex gap-6 items-center">
-						{playerProfileA?.iconPath && (
+						{playerA?.icon_path && (
 							<UserIcon
-								iconPath={playerProfileA.iconPath}
-								displayName={playerProfileA.displayName}
+								iconPath={playerA.icon_path}
+								displayName={playerA.display_name}
 								className="w-12 h-12 my-auto"
 							/>
 						)}
 						<div className="hidden md:block text-4xl">
-							{playerProfileA?.displayName}
+							{playerA?.display_name}
 						</div>
 					</div>
-					<div className="text-2xl md:text-6xl">
-						<Score status={statusA} score={scoreA} />
-					</div>
+					<div className="text-2xl md:text-6xl">{scoreA}</div>
 				</div>
 				<div className="font-bold text-center">
-					<div className="text-gray-100">{gameDisplayName}</div>
-					{gameResultKind ? (
-						<div className="text-3xl">
-							{gameResultKind === "winA"
-								? `勝者 ${playerProfileA!.displayName}`
-								: gameResultKind === "winB"
-									? `勝者 ${playerProfileB!.displayName}`
-									: "引き分け"}
-						</div>
-					) : (
-						<LeftTime sec={leftTimeSeconds} />
-					)}
+					<div className="text-gray-100">{game.display_name}</div>
+					<div className="text-3xl">
+						{gameResultKind === "winA"
+							? `勝者 ${playerA!.display_name}`
+							: gameResultKind === "winB"
+								? `勝者 ${playerB!.display_name}`
+								: "引き分け"}
+					</div>
 				</div>
 				<div className="font-bold flex gap-4 justify-end md:justify-between items-center my-auto">
-					<div className="text-2xl md:text-6xl">
-						<Score status={statusB} score={scoreB} />
-					</div>
+					<div className="text-2xl md:text-6xl">{scoreB}</div>
 					<div className="flex gap-6 items-center text-end">
 						<div className="hidden md:block text-4xl">
-							{playerProfileB?.displayName}
+							{playerB?.display_name}
 						</div>
-						{playerProfileB?.iconPath && (
+						{playerB?.icon_path && (
 							<UserIcon
-								iconPath={playerProfileB.iconPath}
-								displayName={playerProfileB.displayName}
+								iconPath={playerB.icon_path}
+								displayName={playerB.display_name}
 								className="w-12 h-12 my-auto"
 							/>
 						)}
@@ -133,16 +135,15 @@ export default function GolfWatchAppGaming1v1({
 					<FoldableBorderedContainerWithCaption
 						caption={`コードサイズ: ${codeSizeA}`}
 					>
-						<CodeBlock code={codeA} language={problemLanguage} />
+						<CodeBlock code={codeA} />
 					</FoldableBorderedContainerWithCaption>
 				</TitledColumn>
-				<TitledColumn title={problemTitle} className="order-1 md:order-2">
+				<TitledColumn title={game.problem.title} className="order-1 md:order-2">
 					<ProblemColumnContent
-						description={problemDescription}
-						language={problemLanguage}
-						sampleCode={sampleCode}
+						description={game.problem.description}
+						sampleCode={game.problem.sample_code}
 					/>
-					<RankingTable problemLanguage={problemLanguage} />
+					<RankingTable ranking={ranking} />
 				</TitledColumn>
 				<TitledColumn
 					title={<SubmitStatusLabel status={statusB} />}
@@ -151,7 +152,7 @@ export default function GolfWatchAppGaming1v1({
 					<FoldableBorderedContainerWithCaption
 						caption={`コードサイズ: ${codeSizeB}`}
 					>
-						<CodeBlock code={codeB} language={problemLanguage} />
+						<CodeBlock code={codeB} />
 					</FoldableBorderedContainerWithCaption>
 				</TitledColumn>
 			</ThreeColumnLayout>
