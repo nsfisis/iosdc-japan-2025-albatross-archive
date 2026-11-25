@@ -1,0 +1,35 @@
+{
+	"name": "iosdc-japan-2025-albatross",
+	"private": true,
+	"sideEffects": false,
+	"type": "module",
+	"scripts": {
+		"build": "vite build && node prerender.ts",
+		"preview": "npm run build && vite preview",
+		"check": "npm run check:biome && npm run check:ts",
+		"check:biome": "biome check --write",
+		"check:ts": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@base-ui-components/react": "^1.0.0-rc.0",
+		"@fortawesome/fontawesome-svg-core": "^7.3.1",
+		"@fortawesome/free-solid-svg-icons": "^7.3.1",
+		"@fortawesome/react-fontawesome": "^3.5.0",
+		"react": "^19.3.1",
+		"react-dom": "^19.3.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.6.9",
+		"@tailwindcss/vite": "^4.3.5",
+		"@types/node": "^24.19.4",
+		"@types/react": "^19.3.2",
+		"@types/react-dom": "^19.3.0",
+		"@vitejs/plugin-react": "^6.3.0",
+		"tailwindcss": "^4.3.5",
+		"typescript": "^7.0.2",
+		"vite": "^8.3.8"
+	},
+	"engines": {
+		"node": ">=24.0.0"
+	}
+}
