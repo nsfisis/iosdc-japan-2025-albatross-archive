@@ -33,3 +33,17 @@ fetch api/games/10/watch/latest_states   data/games/10/watch/latest_states.json
 fetch api/games/11/watch/latest_states   data/games/11/watch/latest_states.json
 fetch api/games/12/watch/latest_states   data/games/12/watch/latest_states.json
 fetch 'api/tournament?game1=8&game2=9&game3=10&game4=11&game5=12' data/tournament.json
+
+# Rewrite labels of tournament participants
+#
+#   user_id: 9=log5 10=kntkymt 13=kagaffy 14=kazuya 17=KeisukeSakata 19=WorldDownTown
+grep -rlE '"user_id":(9|10|13|14|17|19),' frontend/data | sort | while read -r f; do
+  jq -c '
+    {"10": "優勝", "14": "準優勝", "13": "ベスト4", "9": "ベスト4", "17": "ベスト6", "19": "ベスト6"} as $labels
+    | walk(
+        if type == "object" and has("user_id") and has("label")
+        then .label = ($labels[.user_id | tostring] // .label)
+        else . end)
+  ' "$f" > "$f.tmp"
+  mv "$f.tmp" "$f"
+done
