@@ -44,7 +44,10 @@ function BranchVR({ className = "" }: { className?: string }) {
 function BranchVL2({
 	score,
 	className = "",
-}: { score: number | null; className?: string }) {
+}: {
+	score: number | null;
+	className?: string;
+}) {
 	return (
 		<div className="grid grid-cols-3">
 			<div className={`border-r-4 ${className}`}></div>
@@ -59,7 +62,10 @@ function BranchVL2({
 function BranchVR2({
 	score,
 	className = "",
-}: { score: number | null; className?: string }) {
+}: {
+	score: number | null;
+	className?: string;
+}) {
 	return (
 		<div className="grid grid-cols-3">
 			<div className={`border-t-4 ${className}`}></div>
@@ -124,7 +130,10 @@ function BranchH2({
 function BranchL({
 	score,
 	className = "",
-}: { score: number | null; className?: string }) {
+}: {
+	score: number | null;
+	className?: string;
+}) {
 	return (
 		<div className="grid grid-cols-2">
 			<div></div>
@@ -140,7 +149,10 @@ function BranchL({
 function BranchR({
 	score,
 	className = "",
-}: { score: number | null; className?: string }) {
+}: {
+	score: number | null;
+	className?: string;
+}) {
 	return (
 		<div className="grid grid-cols-2">
 			<div
